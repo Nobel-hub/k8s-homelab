@@ -1,0 +1,100 @@
+replicaCount: 1
+strategyType: RollingUpdate
+
+image:
+  repository: ghcr.io/homarr-labs/homarr
+  pullPolicy: IfNotPresent
+  tag: "v1.44.0"
+
+env:
+  TZ: "Europe/Paris"
+  LOG_LEVEL: "info"
+  NO_EXTERNAL_CONNECTION: "false"
+  ENABLE_DNS_CACHING: "false"
+  AUTH_PROVIDERS: "credentials"
+  AUTH_LOGOUT_REDIRECT_URL:
+  AUTH_SESSION_EXPIRY_TIME: "30d"
+
+database:
+  type: sqlite
+  migrationEnabled: true
+
+# IMPORTANT: removed all envSecrets to avoid secretKeyRef errors
+envSecrets: {}
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext: {}
+securityContext: {}
+
+service:
+  enabled: true
+  type: ClusterIP
+  ports:
+    app:
+      port: 7575
+      targetPort: http
+      protocol: TCP
+  ipFamilyPolicy: SingleStack
+  ipFamilies: []
+
+livenessProbe:
+  httpGet:
+    path: /api/health/live
+    port: 7575
+
+readinessProbe:
+  httpGet:
+    path: /api/health/ready
+    port: 7575
+
+containerPorts:
+  http:
+    port: 7575
+    protocol: TCP
+
+httproute:
+  enabled: false
+
+ingress:
+  enabled: false
+  ingressClassName: ""
+  annotations: {}
+  hosts:
+    - host: chart-example.local
+      paths:
+        - path: /
+  tls: []
+
+resources: {}
+
+autoscaling:
+  enabled: false
+
+persistence:
+  homarrDatabase:
+    enabled: false
+  homarrTrustedCerts:
+    enabled: false
+    type: configmap
+    existingSecretName: ""
+    existingSecretKeys: []
+    mountPath: "/appdata/trusted-certificates"
+    certificates: {}
+
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+rbac:
+  enabled: false
+
+hostAliases: []
+
+additionalObjects: []
+
