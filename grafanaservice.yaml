@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: prom-stack2-grafana
+  namespace: monitoring
+  labels:
+    app.kubernetes.io/instance: prom-stack2
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: grafana
+    app.kubernetes.io/version: 12.3.0
+    helm.sh/chart: grafana-10.2.0
+spec:
+  type: LoadBalancer
+  ports:
+    - name: http-grafana
+      port: 3000
+      targetPort: 3000
+      protocol: TCP
+  selector:
+    app.kubernetes.io/instance: prom-stack2
+    app.kubernetes.io/name: grafana
+
